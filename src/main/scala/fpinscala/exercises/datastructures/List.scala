@@ -47,15 +47,29 @@ object List: // `List` companion object. Contains functions for creating and wor
   def productViaFoldRight(ns: List[Double]): Double =
     foldRight(ns, 1.0, _ * _) // `_ * _` is more concise notation for `(x,y) => x * y`; see sidebar
 
-  def tail[A](l: List[A]): List[A] = ???
+  def tail[A](l: List[A]): List[A] = l match
+    case Nil => sys.error("Can't tail an empty list")
+    case Cons(_, t) => t
 
-  def setHead[A](l: List[A], h: A): List[A] = ???
+  def setHead[A](l: List[A], h: A): List[A] = l match
+    case Nil => sys.error("Can't setHead on an empty list")
+    case Cons(x, xs) => Cons(h, xs)
 
-  def drop[A](l: List[A], n: Int): List[A] = ???
+  @annotation.tailrec
+  def drop[A](l: List[A], n: Int): List[A] =
+    if n <= 0 then l
+    else l match
+      case Nil => Nil
+      case Cons(_, t) => drop(t, n - 1)
 
-  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = ???
+  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = l match
+    case Cons(h, t) if f(h) => dropWhile(t, f)
+    case _ => l
 
-  def init[A](l: List[A]): List[A] = ???
+  def init[A](l: List[A]): List[A] = l match
+    case Nil => sys.error("Can't init an empty list")
+    case Cons(_, Nil) => Nil
+    case Cons(h, t) => Cons(h, init(t))
 
   def length[A](l: List[A]): Int = ???
 
