@@ -21,13 +21,13 @@ enum Tree[+A]:
     case Branch(l, r) => g(l.fold(f, g), r.fold(f, g))
 
   def sizeViaFold: Int =
-    this.fold(_ => 1, (ls, rs) => ls + rs + 1)
+    this.fold(_ => 1, 1 + _ + _)
 
   def depthViaFold: Int =
-    this.fold(_ => 0, (ld, rd) => (ld+1).max(rd+1))
+    this.fold(_ => 0, (lm, rm) => lm.max(rm) + 1)
 
   def mapViaFold[B](f: A => B): Tree[B] =
-    this.fold(x => Leaf(f(x)), (lm, rm) => Branch(lm, rm))
+    this.fold(x => Leaf(f(x)), Branch(_, _))
 
 object Tree:
 
@@ -46,4 +46,4 @@ object Tree:
     case Branch(l, r) => l.maximum.max(r.maximum)
 
   extension (t: Tree[Int]) def maximumViaFold: Int =
-    t.fold(n => n, (lm, rm) => lm.max(rm))
+    t.fold(n => n, _ max _)
